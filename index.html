@@ -16,6 +16,7 @@ body {
     overflow: hidden;
 }
 
+/* Title */
 h1 {
     margin-top: 80px;
     font-size: 45px;
@@ -33,12 +34,14 @@ h1 {
     100% {transform: scale(1);}
 }
 
+/* Countdown */
 .timer {
     font-size: 22px;
     margin-top: 20px;
     color: #444;
 }
 
+/* Buttons */
 .btn {
     padding: 15px 30px;
     font-size: 20px;
@@ -75,6 +78,25 @@ h1 {
         transform: translateY(110vh);
     }
 }
+
+/* Explosion hearts */
+.explosion-heart {
+    position: absolute;
+    font-size: 24px;
+    pointer-events: none;
+    animation: explode 1s ease-out forwards;
+}
+
+@keyframes explode {
+    0% {
+        transform: scale(0.5);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(var(--x), var(--y)) scale(2);
+        opacity: 0;
+    }
+}
 </style>
 </head>
 
@@ -91,6 +113,7 @@ Will you be my Valentine,<br>
 <button id="noBtn" class="btn">NO 😅</button>
 
 <script>
+
 /* COUNTDOWN TIMER */
 const targetDate = new Date("Feb 14, 2026 00:00:00").getTime();
 
@@ -129,26 +152,56 @@ function createHeart() {
 
     setTimeout(() => heart.remove(), 6000);
 }
-
 setInterval(createHeart, 300);
 
 
 /* YES CLICKED */
 function yesClicked() {
 
+    const btn = document.getElementById("yesBtn");
+    const rect = btn.getBoundingClientRect();
+
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    // HEART EXPLOSION
+    for (let i = 0; i < 25; i++) {
+        const heart = document.createElement("div");
+        heart.classList.add("explosion-heart");
+        heart.innerHTML = "❤️";
+
+        heart.style.left = centerX + "px";
+        heart.style.top = centerY + "px";
+
+        const x = (Math.random() - 0.5) * 300 + "px";
+        const y = (Math.random() - 0.5) * 300 + "px";
+
+        heart.style.setProperty("--x", x);
+        heart.style.setProperty("--y", y);
+
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 1000);
+    }
+
+    // CONFETTI
     confetti({
         particleCount: 200,
-        spread: 90,
+        spread: 100,
         origin: { y: 0.6 }
     });
 
-    document.body.innerHTML = `
-        <h1 style="margin-top:150px; color:#ff4d88;">
-        Whew! 😮‍💨<br>
-        Were you actually going to choose NO? 😭😂<br><br>
-        </h1>
-    `;
+    // FINAL MESSAGE
+    setTimeout(() => {
+        document.body.innerHTML = `
+            <h1 style="margin-top:150px; color:#ff4d88;">
+            Whew! 😮‍💨<br>
+            Were you actually going to choose NO? 😭😂<br><br>
+            I can't wait for our Valentine ❤️🥰
+            </h1>
+        `;
+    }, 1200);
 }
+
 </script>
 
 </body>
